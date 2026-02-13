@@ -92,3 +92,16 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+@media print {
+  /* Force a exibição de cores e fundos */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Esconda elementos desnecessários como a sidebar */
+  .no-print, [data-sidebar], button {
+    display: none !important;
+  }
+}
