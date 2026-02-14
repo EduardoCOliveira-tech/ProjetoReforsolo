@@ -132,7 +132,7 @@ export function EditorSidebar({
       <div className="px-4 py-3 border-b border-slate-800 flex items-center gap-2 bg-slate-950">
         <div className="w-3 h-3 rounded-full bg-[#006837]" />
         <h1 className="text-sm font-bold tracking-wide flex-1">
-          Reforsolo Editor v9.0
+          Reforsolo
         </h1>
         <Button
           size="sm"

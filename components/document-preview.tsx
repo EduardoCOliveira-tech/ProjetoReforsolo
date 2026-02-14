@@ -199,17 +199,22 @@ export function DocumentPreview({ data, items, fotos, onUpdateItem }: DocumentPr
     <div className="w-full bg-slate-200 flex justify-center p-8 print:p-0 print:bg-white print:block overflow-auto">
       <style type="text/css">
         {`
-          @media screen { #preview-wrapper { background-color: white; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); } }
-          @media print {
+            @media screen { #preview-wrapper { background-color: white; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); } }
+            @media print {
             @page { size: A4; margin: 0; }
             html, body { background-color: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            #preview-wrapper { width: 210mm; min-height: 297mm; margin: 0; padding: 0; }
+            #preview-wrapper { width: 210mm; margin: 0; padding: 0; }
             .print-hidden { display: none !important; }
-            .bg-gray-300 { background-color: #d1d5db !important; }
-            .bg-green-crono { background-color: #70ad47 !important; }
-            .bg-yellow-total { background-color: #fff200 !important; }
-            .data-table tfoot { display: table-row-group !important; }
-          }
+            
+            /* Força a quebra antes do elemento */
+            .page-break-before { page-break-before: always !important; break-before: page !important; }
+            
+            /* Evita quebras dentro de tabelas, mas permite entre seções */
+            .avoid-break { break-inside: avoid !important; }
+            
+            /* Garante que o container ocupe a página toda sem sobras */
+            .print-container { width: 100%; }
+            }
         `}
       </style>
 
@@ -619,21 +624,25 @@ export function DocumentPreview({ data, items, fotos, onUpdateItem }: DocumentPr
                         <div className="pt-10 border-t-2 border-dashed border-gray-300 print:border-none" style={{ pageBreakBefore: "always" }}>
                             <h3 className="font-bold text-sm mb-4 border-b border-black pb-1">Relação dos principais serviços realizados</h3>
                             <div className="border border-gray-300 p-4 bg-gray-50 hover:bg-white min-h-[500px]" contentEditable suppressContentEditableWarning>
-                                <table className="w-full text-xs text-left">
-                                    <thead><tr className="border-b border-gray-400"><th className="p-2">TIPO DE SERVIÇO</th><th className="p-2">EMPRESA</th><th className="p-2">OBRA/LOCAL</th></tr></thead>
-                                    <tbody><tr><td className="p-2 text-gray-400 italic text-center pt-20" colSpan={3}>(Cole sua tabela do Excel aqui...)</td></tr></tbody>
-                                </table>
-                            </div>
-                        </div>
-
-                        <div className="pt-10 break-inside-avoid" style={{ pageBreakBefore: "always" }}>
-                            <div className="flex flex-col items-center justify-center">
-                                <h3 className="font-bold text-xl mb-6 text-center text-[#006837] uppercase tracking-widest border-b-2 border-orange-400 pb-2">NOSSOS CLIENTES</h3>
-                                <div className="w-full flex items-center justify-center p-4 break-inside-avoid">
-                                    <img src="/img/lista_clientes.jpg" alt="Lista de Clientes" className="w-full h-auto object-contain max-h-[900px]" />
+                                <div className="w-full flex items-center justify-center p-6 break-inside-avoid">
+                                    <img src="/img/lista_clientes1.png" alt="Lista de Clientes" className="w-full h-auto object-contain max-h-[600px]" />
+                                </div>
+                                <div className="w-full flex items-center justify-center p-6 break-inside-avoid">
+                                    <img src="/img/lista_clientes2.png" alt="Lista de Clientes" className="w-full h-auto object-contain max-h-[600px]" />
+                                </div>
+                                <div className="w-full flex items-center justify-center p-9 break-inside-avoid">
+                                    <img src="/img/lista_clientes3.png" alt="Lista de Clientes" className="w-full h-auto object-contain max-h-[600px]" />
                                 </div>
                             </div>
                         </div>
+
+
+                            <div className="flex flex-col items-center justify-center">
+                                <div className="w-full flex items-center justify-center p-6 break-inside-avoid">
+                                    <img src="/img/lista_clientes.jpg" alt="Lista de Clientes" className="w-full h-auto object-contain max-h-[770px]" />
+                                </div>
+                            </div>
+                     
                     </td>
                 </tr>
             </tbody>

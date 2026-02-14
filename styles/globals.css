@@ -98,10 +98,31 @@ body {
   * {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+
+  @page {
+    margin: 0; /* Remove cabeçalhos e rodapés automáticos (data, título, etc) */
+    size: auto;
+  }
+  body {
+    margin: 1.6cm; /* Define uma margem de segurança real */
   }
 
   /* Esconda elementos desnecessários como a sidebar */
-  .no-print, [data-sidebar], button {
+  .no-print, button, nav, [data-sidebar] {
     display: none !important;
+  }
+
+  .print-container {
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    -webkit-print-color-adjust: exact !important;
+  }
+
+  /* Evita que tabelas de orçamento ou cronograma quebrem no meio */
+  table, tr, img {
+    break-inside: avoid;
   }
 }

@@ -12,7 +12,7 @@ const roboto = Roboto({
 });
 
 export const metadata: Metadata = {
-  title: "SGP Reforsolo - Editor v8",
+  title: "SGP Reforsolo",
   description: "Gerador de Propostas",
 };
 
