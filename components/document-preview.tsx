@@ -244,6 +244,7 @@ export function DocumentPreview({ data, items, fotos, onUpdateItem }: DocumentPr
                             {data.tipoCliente === 'pf' ? (
                                 <>
                                     <p>Ao Sr(a). <span className="font-bold uppercase"><Hl>{data.cliente || "..."}</Hl></span></p>
+                                    <p>CPF: <Hl>{data.cpf || "xxx.xxx.xxx-xx"}</Hl></p>
                                     <p>Telefone: <Hl>{data.telefone || "...."}</Hl></p>
                                     <p>Obra: <span className="uppercase"><Hl>{data.endereco || "..."}</Hl></span></p>
                                 </>
@@ -262,9 +263,9 @@ export function DocumentPreview({ data, items, fotos, onUpdateItem }: DocumentPr
                             <h1 className="font-bold underline uppercase text-lg leading-tight">PROPOSTA DE PREÇOS PARA <br/><span className="bg-yellow-50"><Hl>{data.nomeProjeto || template.nomeProjeto}</Hl></span></h1>
                         </div>
 
-                        <div className="mb-6 text-justify text-sm">
+                        <div className="mb-6 text-sm">
                             <p>{data.tipoProjeto === 'sondagem' ? 'Prezada Senhora (ou Senhor),' : 'Prezado senhor,'}</p>
-                            <p className="mt-2 indent-10">Atendendo vossa solicitação estamos enviando nossa estimativa de preço para <Hl>{data.introServico || template.introServico}</Hl>, conforme nossas condições a seguir:</p>
+                            <p className="mt-2 text-justify indent-10">Atendendo vossa solicitação estamos enviando nossa estimativa de preço para <Hl>{data.introServico || template.introServico}</Hl>, conforme nossas condições a seguir:</p>
                         </div>
 
                         {/* --- SEÇÃO 1 (INSTITUCIONAL) --- */}
@@ -294,8 +295,8 @@ export function DocumentPreview({ data, items, fotos, onUpdateItem }: DocumentPr
                             {/* --------- LAYOUT SONDAGEM SPT --------- */}
                             {data.tipoProjeto === 'sondagem' && (
                                 <>
-                                    <div className="text-[10px] text-justify mb-4 ">
-                                        <p className="indent-10">A proposta aqui apresentada engloba, ao solicitante, a realização de Sondagem e de acordo com as prescrições das Normas Brasileiras.</p>
+                                    <div className="text-[10px] mb-4">
+                                        <p className="text-justify indent-10">A proposta aqui apresentada engloba, ao solicitante, a realização de Sondagem e de acordo com as prescrições das Normas Brasileiras.</p>
                                         
                                         <p className="font-bold mt-2 mb-1">Estão incluídos nos serviços de sondagem:</p>
                                         <ul className="list-disc pl-5 space-y-1">
@@ -310,7 +311,7 @@ export function DocumentPreview({ data, items, fotos, onUpdateItem }: DocumentPr
                                     <h3 className="font-bold text-sm mb-2 mt-6 text-[#006837]">3. MATERIAIS E TÉCNICA</h3>
                                     
                                     <h4 className="font-bold text-[11px] mb-1">3.1 Sondagem SPT</h4>
-                                    <p className="text-[10px] text-justify mb-2 indent-8">
+                                    <p className="text-[10px] text-justify mb-2 indent-10">
                                         A utilização da sondagem SPT visa caracterizar e determinar a resistência do solo, é usado o impacto de uma massa metálica de 65 Kg, denominada martelo, caindo em queda livre de 75 cm de altura sobre um ressalto situado na parte superior do hasteamento a ele conectado.
                                     </p>
                                     <p className="text-[10px] text-justify mb-1 indent-10">Ao se realizar uma sondagem pretende-se conhecer:</p>
@@ -324,7 +325,6 @@ export function DocumentPreview({ data, items, fotos, onUpdateItem }: DocumentPr
                                     </p>
 
                                     <div className="flex flex-col items-center mb-6 break-inside-avoid">
-                                        {/* IMAGEM VERDADEIRA */}
                                         <img 
                                             src="/img/spt-foto1.png" 
                                             alt="Sondagem SPT"
@@ -347,12 +347,10 @@ export function DocumentPreview({ data, items, fotos, onUpdateItem }: DocumentPr
 
                                     <div className="grid grid-cols-2 gap-4 mb-4 break-inside-avoid">
                                         <div className="flex flex-col items-center">
-                                            {/* IMAGEM VERDADEIRA 2D */}
                                             <img src="/img/spt-perfil2d.png" alt="Perfil 2D" className="w-full h-40 object-contain border border-gray-300 mb-1 bg-white" />
                                             <p className="text-[8px] font-bold text-center">Foto 2 - Imagem ilustrativa da seção estratigráfica</p>
                                         </div>
                                         <div className="flex flex-col items-center">
-                                            {/* IMAGEM VERDADEIRA 3D */}
                                             <img src="/img/spt-estratigrafia3d.png" alt="Estratigrafia 3D" className="w-full h-40 object-contain border border-gray-300 mb-1 bg-white" />
                                             <p className="text-[8px] font-bold text-center">Foto 3 - Imagem ilustrativa da estratigrafia... em 3D</p>
                                         </div>
@@ -363,11 +361,12 @@ export function DocumentPreview({ data, items, fotos, onUpdateItem }: DocumentPr
                             {/* --------- LAYOUT GEOTECNIA --------- */}
                             {data.tipoProjeto === 'geotecnico' && (
                                 <>
-                                    <div className="text-[10px] text-justify whitespace-pre-wrap mb-4">
-                                        {data.tecnica || template.tecnica}
+                                    <div className="text-[10px] mb-4">
+                                        {String(data.tecnica || template.tecnica).split('\n').map((line, idx) => (
+                                            line.trim() === '' ? <br key={idx} /> : <p key={idx} className="text-justify indent-10 mb-1">{line}</p>
+                                        ))}
                                     </div>
                                     
-                                    {/* MUDANÇA 1: Mapas Geológicos (489x381 px) centralizados em 1 coluna */}
                                     <div className="flex flex-col items-center gap-6 mb-6">
                                         <div className="border border-gray-200 p-2 text-center bg-gray-50 flex flex-col justify-center items-center break-inside-avoid" style={{ width: '249px', height: '191px' }}>
                                             {fotos[0] ? <img src={fotos[0]} className="w-full h-full object-contain"/> : <div className="flex-1 flex items-center text-gray-400 text-[10px]">Figura 01 - Mapa Geológico</div>}
@@ -381,11 +380,9 @@ export function DocumentPreview({ data, items, fotos, onUpdateItem }: DocumentPr
 
                                     <p className="text-[10px] text-justify mb-4 indent-10">A investigação se dará por meio da retirada de amostra indeformada com Shelby (Figura 03 a 06) para realização de ensaio laboratorial de cisalhamento.</p>
                                    
-                                    {/* MUDANÇA 2: Imagens Padrão 3 a 7 (454x342 px) centralizadas em 1 coluna */}
                                     <div className="flex flex-col items-center gap-6 mb-6">
                                         {[3,4,5,6,7].map((n) => (
                                             <div key={n} className="border border-gray-200 p-2 bg-gray-50 flex flex-col items-center break-inside-avoid" style={{ width: '454px', height: '342px' }}>
-                                                {/* AQUI ESTÁ A IMAGEM VERDADEIRA */}
                                                 <img 
                                                     src={`/img/geo-fig${n}.png`} 
                                                     alt={`Figura 0${n}`}
@@ -395,7 +392,7 @@ export function DocumentPreview({ data, items, fotos, onUpdateItem }: DocumentPr
                                             </div>
                                         ))}
                                     </div>
-                                    <p className="text-[10px] ">Os estudos a serem efetuados objetivam os seguintes itens:</p>
+                                    <p className="text-[10px] text-justify indent-10 mb-2">Os estudos a serem efetuados objetivam os seguintes itens:</p>
                                     <p className="text-[10px] font-bold mt-4">Estão incluídos nos serviços:</p>
                                     <ul className="list-disc pl-4 text-[10px] space-y-1 mt-1">
                                         {items.length > 0 ? items.map((item, i) => (<li key={i}>{item.nome}</li>)) : <li className="text-gray-400 italic">Nenhum item...</li>}
@@ -406,7 +403,7 @@ export function DocumentPreview({ data, items, fotos, onUpdateItem }: DocumentPr
                             {/* --------- LAYOUT DRENAGEM --------- */}
                             {data.tipoProjeto === 'drenagem' && (
                                 <>
-                                    <div className="text-[10px] text-justify mb-2 p-1 rounded">
+                                    <div className="text-[10px] text-justify indent-10 mb-2 p-1 rounded">
                                         Os serviços compreendem o desenvolvimento de projeto de drenagem e fornecimento de ART.
                                     </div>
                                     <p className="text-[10px] font-bold mt-2">Estão incluídos nos serviços de consultoria:</p>
@@ -419,27 +416,26 @@ export function DocumentPreview({ data, items, fotos, onUpdateItem }: DocumentPr
                                     </ul>
 
                                     <h3 className="font-bold text-sm mb-2 mt-6 text-[#006837]">3. MATERIAIS E TÉCNICA</h3>
-                                    <div className="text-[10px] text-justify whitespace-pre-wrap hover:bg-slate-50 p-1 rounded mb-4 indent-10" contentEditable suppressContentEditableWarning>
-                                        {data.tecnica || template.tecnica}
+                                    <div className="text-[10px] hover:bg-slate-50 p-1 rounded mb-4" contentEditable suppressContentEditableWarning>
+                                        {String(data.tecnica || template.tecnica).split('\n').map((line, idx) => (
+                                            line.trim() === '' ? <br key={idx} /> : <p key={idx} className="text-justify indent-10 mb-1">{line}</p>
+                                        ))}
                                     </div>
                                     
-                                    {/* 6 IMAGENS FIXAS PADRÃO DE DRENAGEM */}
-                                    {/* MUDAR grid-cols-3 PARA grid-cols-2 */}
-                                    <div className="grid grid-cols-2 gap-4 break-inside-avoid my-6"> 
+                                    <div className="grid grid-cols-3 gap-2 break-inside-avoid my-4"> 
                                         {[1, 2, 3, 4, 5, 6].map((n) => (
                                             <div key={n} className="border border-gray-200 p-1 bg-gray-50 flex flex-col items-center">
                                                 <img 
                                                     src={`/img/drenagem-fig${n}.png`} 
                                                     alt={`Figura 0${n}`} 
                                                     className="object-cover mb-1 border border-gray-300 bg-gray-200"
-                                                    style={{ width: '268px', height: '215px' }}
+                                                    style={{ width: '200px', height: '145px' }}
                                                 />
                                                 <p className="text-[8px] font-bold text-center">Figura 0{n} - Descrição Padrão</p>
                                             </div>
                                         ))}
                                     </div>
 
-                                    {/* FOTOS ADICIONADAS PELO USUÁRIO */}
                                     {fotos.length > 0 && (
                                         <div className="grid grid-cols-2 gap-4 my-6 break-inside-avoid">
                                             {fotos.map((f, i) => (
@@ -597,7 +593,7 @@ export function DocumentPreview({ data, items, fotos, onUpdateItem }: DocumentPr
                                     <p>✓ <strong>PRAZO DE ENTREGA:</strong> {condicoes.prazo}</p>
                                     <p>✓ <strong>VALIDADE DA PROPOSTA:</strong> {condicoes.validade}</p>
                                 </div>
-                                <p className="mt-2 text-[9px] text-justify  indent-10">
+                                <p className="mt-2 text-[9px] text-justify indent-10">
                                     Esta proposta foi emitida em duas vias de igual teor e mesmos efeitos para submeter
                                     a V.Sa. para análise. Caso seja aprovada V.Sa. deverá apor seu DE ACORDO, enviando os
                                     dados para faturamento e devolver-nos uma via assinada para que tenha todos os efeitos
@@ -635,7 +631,6 @@ export function DocumentPreview({ data, items, fotos, onUpdateItem }: DocumentPr
                                 </div>
                             </div>
                         </div>
-
 
                             <div className="flex flex-col items-center justify-center">
                                 <div className="w-full flex items-center justify-center p-6 break-inside-avoid">
