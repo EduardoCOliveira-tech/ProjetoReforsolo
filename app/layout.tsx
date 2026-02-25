@@ -1,6 +1,5 @@
 // app/layout.tsx
 import type { Metadata, Viewport } from "next";
-import type { Metadata } from "next";
 import { Roboto } from "next/font/google"; // <--- Importe a Roboto
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
