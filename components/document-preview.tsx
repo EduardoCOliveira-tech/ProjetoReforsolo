@@ -382,7 +382,13 @@ export function DocumentPreview({ data, items, fotos, onUpdateItem }: DocumentPr
                                    
                                     <div className="flex flex-col items-center gap-6 mb-6">
                                         {[3,4,5,6,7].map((n) => (
-                                            <div key={n} className="border border-gray-200 p-2 bg-gray-50 flex flex-col items-center break-inside-avoid" style={{ width: '454px', height: '342px' }}>
+                                            <div 
+                                                key={n} 
+                                                // 1. Removemos o style={{ width: '...', height: '...' }}
+                                                // 2. Adicionamos os tamanhos de tela (w-[340px] h-[256px])
+                                                // 3. Adicionamos os tamanhos de impressão (print:w-[454px] print:h-[342px])
+                                                className="border border-gray-200 p-2 bg-gray-50 flex flex-col items-center break-inside-avoid w-[340px] h-[256px] print:w-[454px] print:h-[342px]" 
+                                            >
                                                 <img 
                                                     src={`/img/geo-fig${n}.png`} 
                                                     alt={`Figura 0${n}`}
@@ -461,7 +467,7 @@ export function DocumentPreview({ data, items, fotos, onUpdateItem }: DocumentPr
                         </div>
 
                         {/* --- SEÇÃO DE VALORES (ORÇAMENTO E CRONOGRAMA) --- */}
-                        <div className="mb-6 break-inside-avoid">
+                        <div className="mb-6 ">
                             <h3 className="font-bold text-sm mb-2 text-[#006837] border-t pt-4 border-gray-300">
                                 {data.tipoProjeto === 'geotecnico' ? '3. VALORES' : '4. VALORES'}
                             </h3>
@@ -470,9 +476,10 @@ export function DocumentPreview({ data, items, fotos, onUpdateItem }: DocumentPr
                             </p>
 
                             {/* PLANILHA 01 - ORÇAMENTO */}
-                            <div className="border border-black mb-6">
+                            <div className="border border-black mb-6 break-inside-avoid">
                                 <table className="data-table w-full text-[9px] border-collapse">
-                                    <thead className="bg-gray-200 font-bold border-b border-black print:bg-gray-200" style={{backgroundColor: '#e5e7eb', printColorAdjust: 'exact'}}>
+                                    {/* Trocado thead por tbody para não repetir o cabeçalho */}
+                                    <tbody className="bg-gray-200 font-bold border-b border-black print:bg-gray-200" style={{backgroundColor: '#e5e7eb', printColorAdjust: 'exact'}}>
                                         <tr>
                                             <th className="p-1 border-r border-black w-8 text-center">ITEM</th>
                                             <th className="p-1 border-r border-black text-left">DISCRIMINAÇÃO DOS SERVIÇOS </th>
@@ -481,10 +488,11 @@ export function DocumentPreview({ data, items, fotos, onUpdateItem }: DocumentPr
                                             <th className="p-1 border-r border-black w-16 text-right">UNIT</th>
                                             <th className="p-1 w-16 text-right">TOTAL</th>
                                         </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-black">
+                                    </tbody>
+                                    {/* Removido o divide-y e adicionado border-b direto no <tr> */}
+                                    <tbody>
                                         {items.map((item, idx) => (
-                                            <tr key={idx}>
+                                            <tr key={idx} className="border-b border-black">
                                                 <td className="p-1 border-r border-black text-center">1.{idx + 1}</td>
                                                 <td className="p-1 border-r border-black">{item.nome}</td>
                                                 <td className="p-1 border-r border-black text-center uppercase">{item.unidade}</td>
@@ -494,77 +502,81 @@ export function DocumentPreview({ data, items, fotos, onUpdateItem }: DocumentPr
                                             </tr>
                                         ))}
                                     </tbody>
-                                    <tfoot className="font-bold bg-yellow-100 border-t border-black print:bg-yellow-100" style={{backgroundColor: '#fef9c3', printColorAdjust: 'exact'}}>
+                                    {/* Trocado tfoot por tbody para não repetir no fim das páginas */}
+                                    <tbody className="font-bold bg-yellow-100 border-t border-black print:bg-yellow-100" style={{backgroundColor: '#fef9c3', printColorAdjust: 'exact'}}>
                                         <tr><td colSpan={5} className="p-1 text-right border-r border-black">TOTAL</td><td className="p-1 text-right">{formatCurrency(totalGeralOrcamento)}</td></tr>
-                                    </tfoot>
+                                    </tbody>
                                 </table>
                             </div>
 
                             {/* PLANILHA 02 - CRONOGRAMA */}
-                            <div className="relative group/wrapper">
+                            <div className="relative group/wrapper break-inside-avoid">
                                 <button onClick={addRow} className="absolute -top-5 left-0 text-[9px] bg-green-100 text-green-800 px-2 rounded print-hidden opacity-0 group-hover/wrapper:opacity-100">+ Add Manual</button>
                                 <button onClick={addCol} className="absolute -top-5 right-0 text-[9px] bg-blue-100 text-blue-800 px-2 rounded print-hidden opacity-0 group-hover/wrapper:opacity-100">+ Add Coluna</button>
 
-                                <div className="border border-black overflow-hidden">
+                                {/* Removido o 'overflow-hidden' que cortava as bordas e adicionado print:border-black */}
+                                {/* Tabela do Cronograma com bordas reforçadas para impressão */}
+                                <div className="border border-black print:border-black">
                                     <table className="data-table w-full text-[8px] border-collapse table-fixed">
-                                        <thead>
-                                            <tr className="bg-gray-300 print:bg-gray-300 border-b border-black" style={{backgroundColor: '#d1d5db', printColorAdjust: 'exact'}}>
-                                                <th colSpan={2 + cols.length + 1} className="p-1 text-center font-bold border-b border-black text-[9px]">CRONOGRAMA FÍSICO-FINANCEIRO</th>
+                                        <tbody>
+                                            <tr className="bg-gray-300 print:bg-gray-300 border-b border-black print:border-black" style={{backgroundColor: '#d1d5db', printColorAdjust: 'exact'}}>
+                                                <th colSpan={2 + cols.length + 1} className="p-1 text-center font-bold border-b border-black print:border-black text-[9px]">CRONOGRAMA FÍSICO-FINANCEIRO</th>
                                             </tr>
-                                            <tr className="bg-gray-300 print:bg-gray-300 border-b border-black font-bold" style={{backgroundColor: '#d1d5db', printColorAdjust: 'exact'}}>
-                                                <th rowSpan={2} className="w-8 border-r border-black p-1">Item</th>
-                                                <th rowSpan={2} className="border-r border-black p-1">Descrição</th>
-                                                <th colSpan={cols.length} className="border-r border-black p-1 border-b border-black text-center">Dias / Prazo</th>
-                                                <th rowSpan={2} className="w-20 p-1 text-center">TOTAL (R$)</th>
+                                            <tr className="bg-gray-300 print:bg-gray-300 border-b border-black print:border-black font-bold" style={{backgroundColor: '#d1d5db', printColorAdjust: 'exact'}}>
+                                                <th rowSpan={2} className="w-8 border-r border-black print:border-black p-1">Item</th>
+                                                <th rowSpan={2} className="border-r border-black print:border-black p-1">Descrição</th>
+                                                <th colSpan={cols.length} className="border-r border-black print:border-black p-1 border-b border-black print:border-black text-center">Dias / Prazo</th>
+                                                {/* Adicionado border-l e print:border-black na coluna de TOTAL */}
+                                                <th rowSpan={2} className="w-20 p-1 text-center border-l border-black print:border-black">TOTAL (R$)</th>
                                             </tr>
-                                            <tr className="bg-white print:bg-white border-b border-black font-bold h-6">
+                                            <tr className="bg-white print:bg-white border-b border-black print:border-black font-bold h-6">
                                                 {cols.map((col, i) => (
-                                                    <th key={i} className="border-r border-black text-center w-14 relative group/th bg-white">
+                                                    <th key={i} className="border-r border-black print:border-black text-center w-14 relative group/th bg-white">
                                                         <input value={col} onChange={(e) => updateColTitle(i, e.target.value)} className="w-full text-center font-bold bg-transparent outline-none p-0.5"/>
                                                         {cols.length > 1 && <button onClick={() => removeCol(i)} className="absolute -top-1 -right-1 text-red-500 print-hidden opacity-0 group-hover/th:opacity-100 z-50 bg-white rounded-full"><XCircle size={10}/></button>}
                                                     </th>
                                                 ))}
                                             </tr>
-                                        </thead>
-                                        <tbody className="divide-y divide-black">
+                                        </tbody>
+                                        <tbody>
                                             {rows.map((row, rIdx) => (
-                                                <tr key={row.id} className="relative group/row hover:bg-gray-50">
-                                                    <td className="border-r border-black text-center font-bold p-0 relative">
+                                                <tr key={row.id} className="relative group/row hover:bg-gray-50 border-b border-black print:border-black">
+                                                    <td className="border-r border-black print:border-black text-center font-bold p-0 relative">
                                                         <input value={row.itemNum} onChange={(e) => updateRowMeta(rIdx, 'itemNum', e.target.value)} className="w-full h-full text-center bg-transparent outline-none py-4"/>
                                                         <button onClick={() => removeRow(rIdx)} className="absolute top-1 left-1 text-red-400 print-hidden opacity-0 group-hover/row:opacity-100"><Trash2 size={8}/></button>
                                                     </td>
-                                                    <td className="border-r border-black p-1"><textarea rows={3} value={row.desc} onChange={(e) => updateRowMeta(rIdx, 'desc', e.target.value)} className="w-full h-full bg-transparent outline-none resize-none text-[8px] leading-tight overflow-hidden"/></td>
+                                                    <td className="border-r border-black print:border-black p-1"><textarea rows={3} value={row.desc} onChange={(e) => updateRowMeta(rIdx, 'desc', e.target.value)} className="w-full h-full bg-transparent outline-none resize-none text-[8px] leading-tight overflow-hidden"/></td>
                                                     {row.cells.map((cell, cIdx) => (
-                                                        <td key={cIdx} className="border-r border-black p-0 h-16 relative">
+                                                        <td key={cIdx} className="border-r border-black print:border-black p-0 h-16 relative">
                                                             <div className="flex flex-col h-full w-full">
                                                                 <input className="h-[33%] w-full text-center outline-none bg-transparent pb-1" value={cell.val} onChange={(e) => updateCell(rIdx, cIdx, 'val', e.target.value)} />
-                                                                <div className={`h-[34%] w-full border-y border-black ${cell.val ? 'bg-green-crono print:bg-green-crono' : 'bg-transparent'}`} style={{ printColorAdjust: 'exact' }}></div>
+                                                                <div className={`h-[34%] w-full border-y border-black print:border-black ${cell.val ? 'bg-green-crono print:bg-green-crono' : 'bg-transparent'}`} style={{ printColorAdjust: 'exact' }}></div>
                                                                 <input className="h-[33%] w-full text-center outline-none bg-transparent pt-1 text-gray-600" value={cell.pct} onChange={(e) => updateCell(rIdx, cIdx, 'pct', e.target.value)} />
                                                             </div>
                                                         </td>
                                                     ))}
-                                                    <td className="font-bold text-center bg-gray-100 print:bg-gray-100 p-0" style={{backgroundColor: '#f3f4f6', printColorAdjust: 'exact'}}>
+                                                    <td className="font-bold text-center bg-gray-100 print:bg-gray-100 p-0 border-l border-black print:border-black" style={{backgroundColor: '#f3f4f6', printColorAdjust: 'exact'}}>
                                                         <input className="w-full h-full bg-transparent text-center font-bold outline-none text-[9px]" value={formatMoneyRaw(row.totalAlvo)} onChange={(e) => handleTotalChange(rIdx, e.target.value)} />
                                                     </td>
                                                 </tr>
                                             ))}
                                         </tbody>
-                                        <tfoot className="border-t border-black font-bold">
-                                            <tr className="bg-gray-300 print:bg-gray-300 border-b border-black" style={{backgroundColor: '#d1d5db', printColorAdjust: 'exact'}}>
-                                                <td colSpan={2} className="text-right pr-2 p-1 border-r border-black">Percentual no Período</td>
-                                                {footerData.colData.map((d, i) => <td key={i} className="text-center p-1 border-r border-black">{d.pct > 0.01 ? d.pct.toFixed(1).replace('.', ',') + '%' : '-'}</td>)}
-                                                <td className="bg-gray-400 print:bg-gray-400" style={{backgroundColor: '#9ca3af'}}></td>
+                                        <tbody className="border-t border-black print:border-black font-bold">
+                                            <tr className="bg-gray-300 print:bg-gray-300 border-b border-black print:border-black" style={{backgroundColor: '#d1d5db', printColorAdjust: 'exact'}}>
+                                                <td colSpan={2} className="text-right pr-2 p-1 border-r border-black print:border-black">Percentual no Período</td>
+                                                {footerData.colData.map((d, i) => <td key={i} className="text-center p-1 border-r border-black print:border-black">{d.pct > 0.01 ? d.pct.toFixed(1).replace('.', ',') + '%' : '-'}</td>)}
+                                                <td className="bg-gray-400 print:bg-gray-400 border-l border-black print:border-black" style={{backgroundColor: '#9ca3af'}}></td>
                                             </tr>
-                                            <tr className="bg-gray-300 print:bg-gray-300 border-b border-black" style={{backgroundColor: '#d1d5db', printColorAdjust: 'exact'}}>
-                                                <td colSpan={2} className="text-right pr-2 p-1 border-r border-black">Valor acumulado</td>
-                                                {footerData.colData.map((d, i) => <td key={i} className="text-center p-1 border-r border-black text-[7px]">{d.acumuladoVal > 0 ? formatMoneyRaw(d.acumuladoVal) : '-'}</td>)}
-                                                <td rowSpan={2} className="text-center align-middle font-bold text-[9px] border-l border-black">{formatMoneyRaw(footerData.totalGeral)}</td>
+                                            <tr className="bg-gray-300 print:bg-gray-300 border-b border-black print:border-black" style={{backgroundColor: '#d1d5db', printColorAdjust: 'exact'}}>
+                                                <td colSpan={2} className="text-right pr-2 p-1 border-r border-black print:border-black">Valor acumulado</td>
+                                                {footerData.colData.map((d, i) => <td key={i} className="text-center p-1 border-r border-black print:border-black text-[7px]">{d.acumuladoVal > 0 ? formatMoneyRaw(d.acumuladoVal) : '-'}</td>)}
+                                                <td rowSpan={2} className="text-center align-middle font-bold text-[9px] border-l border-black print:border-black">{formatMoneyRaw(footerData.totalGeral)}</td>
                                             </tr>
-                                            <tr className="bg-yellow-total print:bg-yellow-total border-b border-black" style={{backgroundColor: '#fff200', printColorAdjust: 'exact'}}>
-                                                <td colSpan={2} className="text-right pr-2 p-1 border-r border-black">Valor total</td>
-                                                {footerData.colData.map((d, i) => <td key={i} className="text-center p-1 border-r border-black text-[7px]">{d.val > 0 ? formatMoneyRaw(d.val) : '-'}</td>)}
+                                            <tr className="bg-yellow-total print:bg-yellow-total border-b border-black print:border-black" style={{backgroundColor: '#fff200', printColorAdjust: 'exact'}}>
+                                                <td colSpan={2} className="text-right pr-2 p-1 border-r border-black print:border-black">Valor total</td>
+                                                {footerData.colData.map((d, i) => <td key={i} className="text-center p-1 border-r border-black print:border-black text-[7px]">{d.val > 0 ? formatMoneyRaw(d.val) : '-'}</td>)}
                                             </tr>
-                                        </tfoot>
+                                        </tbody>
                                     </table>
                                 </div>
                             </div>
