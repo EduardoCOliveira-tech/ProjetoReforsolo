@@ -1,4 +1,5 @@
 // app/layout.tsx
+import type { Metadata, Viewport } from "next";
 import type { Metadata } from "next";
 import { Roboto } from "next/font/google"; // <--- Importe a Roboto
 import "./globals.css";
@@ -10,6 +11,13 @@ const roboto = Roboto({
   weight: ["300", "400", "500", "700"],
   variable: "--font-roboto",
 });
+
+// Isso força os celulares a lerem o tamanho real da tela (ativando o modo mobile do Tailwind)
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1, // Opcional, mas evita que o layout quebre ao dar zoom nos inputs
+};
 
 export const metadata: Metadata = {
   title: "SGP Reforsolo",
