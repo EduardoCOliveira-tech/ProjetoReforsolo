@@ -476,7 +476,7 @@ export function DocumentPreview({ data, items, fotos, onUpdateItem }: DocumentPr
                             </p>
 
                             {/* PLANILHA 01 - ORÇAMENTO */}
-                            <div className="border border-black mb-6 break-inside-avoid">
+                            <div className="border border-black mb-6">
                                 <table className="data-table w-full text-[9px] border-collapse">
                                     {/* Trocado thead por tbody para não repetir o cabeçalho */}
                                     <tbody className="bg-gray-200 font-bold border-b border-black print:bg-gray-200" style={{backgroundColor: '#e5e7eb', printColorAdjust: 'exact'}}>
@@ -510,7 +510,7 @@ export function DocumentPreview({ data, items, fotos, onUpdateItem }: DocumentPr
                             </div>
 
                             {/* PLANILHA 02 - CRONOGRAMA */}
-                            <div className="relative group/wrapper break-inside-avoid">
+                            <div className="relative group/wrapper">
                                 <button onClick={addRow} className="absolute -top-5 left-0 text-[9px] bg-green-100 text-green-800 px-2 rounded print-hidden opacity-0 group-hover/wrapper:opacity-100">+ Add Manual</button>
                                 <button onClick={addCol} className="absolute -top-5 right-0 text-[9px] bg-blue-100 text-blue-800 px-2 rounded print-hidden opacity-0 group-hover/wrapper:opacity-100">+ Add Coluna</button>
 
