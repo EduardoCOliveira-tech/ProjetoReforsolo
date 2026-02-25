@@ -134,7 +134,7 @@ export default function Page() {
          </div>
 
         {/* Componente do PDF */}
-        <div className="py-6 px-4 flex justify-center w-full print:p-0 print:block">
+        <div className="py-6 px-4 flex justify-center w-full min-w-0 overflow-hidden print:p-0 print:block print:overflow-visible">
           <DocumentPreview
             data={data}
             items={items}
