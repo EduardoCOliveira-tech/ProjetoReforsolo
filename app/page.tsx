@@ -121,7 +121,7 @@ export default function Page() {
       </div>
 
       {/* 2. ÁREA DO DOCUMENTO (A4) */}
-      <main className="h-[50dvh] md:h-full flex-1 overflow-auto relative bg-slate-900/50 print:overflow-visible print:h-auto print:block print:bg-white print:m-0 print:p-0">
+      <main className="min-w-0 h-[50dvh] md:h-full flex-1 overflow-auto relative bg-slate-900/50 print:overflow-visible print:h-auto print:block print:bg-white print:m-0 print:p-0">
         
         {/* Botão Voltar */}
         <div className="sticky top-4 left-4 z-50 inline-block ml-4 mt-4 print:hidden">
