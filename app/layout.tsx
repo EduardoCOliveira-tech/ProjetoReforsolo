@@ -1,21 +1,20 @@
 // app/layout.tsx
 import type { Metadata, Viewport } from "next";
-import { Roboto } from "next/font/google"; // <--- Importe a Roboto
+import { Roboto } from "next/font/google"; 
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 
-// Configure a fonte
 const roboto = Roboto({ 
   subsets: ["latin"], 
   weight: ["300", "400", "500", "700"],
   variable: "--font-roboto",
 });
 
-// Isso força os celulares a lerem o tamanho real da tela (ativando o modo mobile do Tailwind)
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1, // Opcional, mas evita que o layout quebre ao dar zoom nos inputs
+  maximumScale: 1,
+  userScalable: false, // Impede do layout quebrar ao focar no input
 };
 
 export const metadata: Metadata = {
@@ -29,7 +28,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR"> {/* <--- Garanta que está pt-BR */}
+    <html lang="pt-BR"> 
       <body className={`${roboto.variable} font-sans antialiased`}>
         {children}
         <Toaster />
