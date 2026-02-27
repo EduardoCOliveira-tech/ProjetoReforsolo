@@ -228,8 +228,9 @@ export function DocumentPreview({ data, items, fotos, onUpdateItem }: DocumentPr
       </style>
 
       {/* FUNDO TIMBRADO */}
-      <div className="hidden print:block fixed inset-0 z-[0] pointer-events-none flex items-center justify-center">
-         <img src="/fundo_timbrado.jpg" className="w-[210mm] h-[297mm] object-cover" style={{ opacity: 1 }} alt="Fundo"/>
+      {/* Removido o 'inset-0' (que encolhia pro tamanho do celular) e forçamos os 210mm! */}
+      <div className="hidden print:block fixed top-0 left-0 z-[0] pointer-events-none" style={{ width: '210mm', height: '297mm' }}>
+         <img src="/fundo_timbrado.jpg" className="w-full h-full object-cover" alt="Fundo"/>
       </div>
 
       <div id="preview-wrapper" className="relative z-[10] mx-auto print:w-full print:bg-transparent" style={{ width: '210mm', minHeight: '297mm' }}>
