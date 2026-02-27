@@ -100,7 +100,6 @@ export default function Page() {
 
   // --- TELA DO EDITOR ---
   return (
-    {/* ADICIONADO print:max-w-none AQUI */}
     <div className="flex flex-col-reverse lg:flex-row h-[100dvh] w-full max-w-[100vw] bg-slate-950 overflow-hidden print:overflow-visible print:h-auto print:block print:bg-white print:max-w-none">
       
       {/* SIDEBAR / CONTROLES */}
@@ -117,8 +116,6 @@ export default function Page() {
         </div>
       </div>
 
-      {/* ÁREA DO DOCUMENTO (A4) */}
-      {/* ADICIONADO print:max-w-none AQUI */}
       <main className="min-w-0 max-w-[100vw] h-[50dvh] lg:h-full flex-1 overflow-x-hidden overflow-y-auto relative bg-slate-900/50 print:overflow-visible print:h-auto print:block print:bg-white print:m-0 print:p-0 print:max-w-none">
         
         <div className="sticky top-4 left-4 z-50 inline-block ml-4 mt-4 print:hidden">
@@ -130,8 +127,6 @@ export default function Page() {
              </button>
          </div>
 
-        {/* CONTAINER DA FOLHA */}
-        {/* ADICIONADO print:max-w-none AQUI */}
         <div className="py-6 px-0 sm:px-4 flex justify-start lg:justify-center w-full min-w-0 max-w-full overflow-x-auto print:p-0 print:block print:overflow-visible print:max-w-none">
           <DocumentPreview
             data={data}
