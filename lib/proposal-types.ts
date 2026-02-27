@@ -29,6 +29,7 @@ export interface ProposalData {
   endereco: string // Obra
   nomeProjeto: string
   cliente: string // Nome
+  cpf?: string // <--- ADICIONE ESTA LINHA AQUI
   empresa: string
   cnpj: string
   ac: string // Aos cuidados de

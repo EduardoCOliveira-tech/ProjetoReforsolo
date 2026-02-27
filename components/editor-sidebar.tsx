@@ -17,6 +17,27 @@ import { Search, Plus, X, ImagePlus, Trash2, Printer, FileText, PenTool, DollarS
 import type { ProposalData, SelectedItem, ServiceItem } from "@/lib/proposal-types"
 import { SERVICOS_DB, formatCurrency } from "@/lib/proposal-types"
 
+// --- FUNÇÕES DE MÁSCARA ADICIONADAS AQUI ---
+const formatCPF = (value: string) => {
+  return value
+    .replace(/\D/g, "") // Remove tudo o que não é dígito
+    .replace(/(\d{3})(\d)/, "$1.$2") // Coloca um ponto entre o terceiro e o quarto dígitos
+    .replace(/(\d{3})(\d)/, "$1.$2") // Coloca um ponto entre o sexto e o sétimo dígitos
+    .replace(/(\d{3})(\d{1,2})/, "$1-$2") // Coloca um hífen entre o nono e o décimo dígitos
+    .replace(/(-\d{2})\d+?$/, "$1") // Impede de digitar mais do que 14 caracteres
+}
+
+const formatCNPJ = (value: string) => {
+  return value
+    .replace(/\D/g, "") // Remove tudo o que não é dígito
+    .replace(/(\d{2})(\d)/, "$1.$2") // Coloca um ponto entre o segundo e o terceiro dígitos
+    .replace(/(\d{3})(\d)/, "$1.$2") // Coloca um ponto entre o quinto e o sexto dígitos
+    .replace(/(\d{3})(\d)/, "$1/$2") // Coloca uma barra entre o oitavo e o nono dígitos
+    .replace(/(\d{4})(\d)/, "$1-$2") // Coloca um hífen depois do bloco de quatro dígitos
+    .replace(/(-\d{2})\d+?$/, "$1") // Impede de digitar mais do que 18 caracteres
+}
+// -------------------------------------------
+
 interface EditorSidebarProps {
   data: ProposalData
   onChange: (data: ProposalData) => void
@@ -193,16 +214,35 @@ export function EditorSidebar({
                 
                 {/* CAMPOS CONDICIONAIS */}
                 {data.tipoCliente === 'pf' ? (
-                    <div className="space-y-1">
-                        <Input placeholder="Nome do Cliente" value={data.cliente} onChange={(e) => handleFieldChange("cliente", e.target.value)} className="h-7 text-xs bg-slate-900 border-slate-700" />
-                    </div>
+                    <>
+                        <div className="space-y-1">
+                            <Input placeholder="Nome do Cliente" value={data.cliente} onChange={(e) => handleFieldChange("cliente", e.target.value)} className="h-7 text-xs bg-slate-900 border-slate-700" />
+                        </div>
+                        <div className="space-y-1">
+                            {/* MÁSCARA APLICADA AQUI NO CPF */}
+                            <Input 
+                                placeholder="CPF" 
+                                value={data.cpf || ''} 
+                                onChange={(e) => handleFieldChange("cpf", formatCPF(e.target.value))} 
+                                maxLength={14}
+                                className="h-7 text-xs bg-slate-900 border-slate-700" 
+                            />
+                        </div>
+                    </>
                 ) : (
                     <>
                         <div className="space-y-1">
                             <Input placeholder="Razão Social / Empresa" value={data.empresa || ''} onChange={(e) => handleFieldChange("empresa", e.target.value)} className="h-7 text-xs bg-slate-900 border-slate-700" />
                         </div>
                         <div className="space-y-1">
-                            <Input placeholder="CNPJ" value={data.cnpj || ''} onChange={(e) => handleFieldChange("cnpj", e.target.value)} className="h-7 text-xs bg-slate-900 border-slate-700" />
+                            {/* MÁSCARA APLICADA AQUI NO CNPJ */}
+                            <Input 
+                                placeholder="CNPJ" 
+                                value={data.cnpj || ''} 
+                                onChange={(e) => handleFieldChange("cnpj", formatCNPJ(e.target.value))} 
+                                maxLength={18}
+                                className="h-7 text-xs bg-slate-900 border-slate-700" 
+                            />
                         </div>
                         <div className="space-y-1">
                             <Input placeholder="A.C. (Aos Cuidados)" value={data.ac || ''} onChange={(e) => handleFieldChange("ac", e.target.value)} className="h-7 text-xs bg-slate-900 border-slate-700" />
