@@ -196,14 +196,23 @@ export function DocumentPreview({ data, items, fotos, onUpdateItem }: DocumentPr
   const updateLegenda = (index: number, val: string) => { const novas = [...legendas]; novas[index] = val; setLegendas(novas) }
 
   return (
-    <div className="w-full bg-slate-200 flex justify-center p-8 print:p-0 print:bg-white print:block overflow-auto">
+
+    <div className="w-full bg-slate-200 flex justify-center p-8 print:p-0 print:bg-white print:block overflow-auto print:overflow-visible">
       <style type="text/css">
         {`
             @media screen { #preview-wrapper { background-color: white; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); } }
             @media print {
             @page { size: A4; margin: 0; }
-            html, body { background-color: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            #preview-wrapper { width: 210mm; margin: 0; padding: 0; }
+            /* 2. FORÇANDO A TELA DO CELULAR A TER 210mm NA HORA DO PDF */
+            html, body { 
+                background-color: white !important; 
+                -webkit-print-color-adjust: exact; 
+                print-color-adjust: exact; 
+                width: 210mm !important; 
+                min-width: 210mm !important;
+                display: block !important;
+            }
+            #preview-wrapper { width: 210mm !important; max-width: 210mm !important; margin: 0; padding: 0; }
             .print-hidden { display: none !important; }
             
             /* Força a quebra antes do elemento */

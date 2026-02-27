@@ -139,9 +139,11 @@ html {
 
   html, body {
     max-width: none !important;
-    width: auto !important;
+    width: 210mm !important;      /* Força a largura do A4 ignorando a tela fina do celular */
+    min-width: 210mm !important;  /* Força a largura do A4 ignorando a tela fina do celular */
     overflow: visible !important;
     overflow-x: visible !important;
+    display: block !important;
   }
 
   @page {
