@@ -136,6 +136,14 @@ html {
 
 /* Print styles */
 @media print {
+
+  html, body {
+    max-width: none !important;
+    width: auto !important;
+    overflow: visible !important;
+    overflow-x: visible !important;
+  }
+
   @page {
     margin: 0;
     size: A4;
