@@ -100,24 +100,6 @@ export default function Page() {
 
   // --- TELA DO EDITOR ---
   return (
-    <div className="flex flex-col-reverse lg:flex-row h-[100dvh] w-full max-w-[100vw] bg-slate-950 overflow-hidden print:overflow-visible print:h-auto print:block print:bg-white">
-      
-      {/* SIDEBAR / CONTROLES */}
-      <div className="h-[50dvh] lg:h-full w-full lg:w-auto shrink-0 border-t lg:border-t-0 lg:border-r border-slate-800 bg-slate-950 shadow-[0_-10px_20px_-5px_rgba(0,0,0,0.5)] lg:shadow-none relative z-20 print:hidden flex flex-col">
-        <div className="flex-1 overflow-y-auto w-full h-full">
-            <EditorSidebar
-                data={data}
-                onChange={setData}
-                items={items}
-                onItemsChange={setItems}
-                fotos={fotos}
-                onFotosChange={setFotos}
-            />
-        </div>
-      </div>
-
-      {/* ÁREA DO DOCUMENTO (A4) */}
-      return (
     {/* ADICIONADO print:max-w-none AQUI */}
     <div className="flex flex-col-reverse lg:flex-row h-[100dvh] w-full max-w-[100vw] bg-slate-950 overflow-hidden print:overflow-visible print:h-auto print:block print:bg-white print:max-w-none">
       
