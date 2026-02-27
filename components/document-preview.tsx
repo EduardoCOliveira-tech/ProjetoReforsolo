@@ -200,40 +200,50 @@ export function DocumentPreview({ data, items, fotos, onUpdateItem }: DocumentPr
     <div className="w-full bg-slate-200 flex justify-center p-8 print:p-0 print:bg-white print:block overflow-auto print:overflow-visible">
       <style type="text/css">
         {`
-            @media screen { #preview-wrapper { background-color: white; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); } }
-            @media print {
-            @page { size: A4; margin: 0; }
-            /* 2. FORÇANDO A TELA DO CELULAR A TER 210mm NA HORA DO PDF */
-            html, body { 
-                background-color: white !important; 
-                -webkit-print-color-adjust: exact; 
-                print-color-adjust: exact; 
-                width: 210mm !important; 
-                min-width: 210mm !important;
-                display: block !important;
+            @media screen { 
+                #preview-wrapper { 
+                    background-color: white; 
+                    box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); 
+                    /* Removemos o background-image daqui para não aparecer na edição! */
+                } 
             }
-            #preview-wrapper { width: 210mm !important; max-width: 210mm !important; margin: 0; padding: 0; }
-            .print-hidden { display: none !important; }
-            
-            /* Força a quebra antes do elemento */
-            .page-break-before { page-break-before: always !important; break-before: page !important; }
-            
-            /* Evita quebras dentro de tabelas, mas permite entre seções */
-            .avoid-break { break-inside: avoid !important; }
-            
-            /* Garante que o container ocupe a página toda sem sobras */
-            .print-container { width: 100%; }
+            @media print {
+                @page { size: A4; margin: 0 !important; }
+                html, body { 
+                    background-color: white !important; 
+                    -webkit-print-color-adjust: exact !important; 
+                    print-color-adjust: exact !important; 
+                    width: 210mm !important; 
+                    min-width: 210mm !important;
+                    display: block !important;
+                }
+                #preview-wrapper { 
+                    width: 210mm !important; 
+                    max-width: 210mm !important; 
+                    margin: 0 !important; 
+                    padding: 0 !important; 
+                    /* A imagem agora só vai aparecer aqui, no momento da impressão! */
+                    background-image: url('/fundo_timbrado.jpg') !important;
+                    background-size: 210mm 297mm !important;
+                    background-repeat: repeat-y !important;
+                    background-position: top left !important;
+                }
+                .print-hidden { display: none !important; }
+                .page-break-before { page-break-before: always !important; break-before: page !important; }
+                .avoid-break { break-inside: avoid !important; }
+                .print-container { width: 100%; }
             }
         `}
       </style>
 
-      {/* FUNDO TIMBRADO */}
-      {/* Removido o 'inset-0' (que encolhia pro tamanho do celular) e forçamos os 210mm! */}
-      <div className="hidden print:block fixed top-0 left-0 z-[0] pointer-events-none" style={{ width: '210mm', height: '297mm' }}>
-         <img src="/fundo_timbrado.jpg" className="w-full h-full object-cover" alt="Fundo"/>
+      {/* --- TRUQUE DE PRÉ-CARREGAMENTO --- */}
+      {/* Força o navegador a baixar a imagem silenciosamente assim que o site abre, evitando atraso no PDF */}
+      <div className="absolute w-0 h-0 overflow-hidden opacity-0 pointer-events-none z-[-1]">
+        <img src="/fundo_timbrado.jpg" alt="Preload" />
       </div>
 
-      <div id="preview-wrapper" className="relative z-[10] mx-auto print:w-full print:bg-transparent" style={{ width: '210mm', minHeight: '297mm' }}>
+      {/* A tag <img> solta do fundo timbrado foi DELETADA propositalmente, pois o CSS acima assumiu o controle dela! */}
+      <div id="preview-wrapper" className="relative z-[10] mx-auto print:w-full" style={{ width: '210mm', minHeight: '297mm' }}>
         <table className="w-full print-container font-sans text-slate-900 border-collapse relative z-[20]">
             <thead className="print:table-header-group"><tr className="border-none"><td className="h-[4.5cm] w-full block border-none"></td></tr></thead>
             
