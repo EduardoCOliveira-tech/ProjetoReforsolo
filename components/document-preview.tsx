@@ -204,11 +204,11 @@ export function DocumentPreview({ data, items, fotos, onUpdateItem }: DocumentPr
                 #preview-wrapper { 
                     background-color: white; 
                     box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); 
-                    /* Removemos o background-image daqui para não aparecer na edição! */
                 } 
             }
             @media print {
                 @page { size: A4; margin: 0 !important; }
+                
                 html, body { 
                     background-color: white !important; 
                     -webkit-print-color-adjust: exact !important; 
@@ -216,18 +216,25 @@ export function DocumentPreview({ data, items, fotos, onUpdateItem }: DocumentPr
                     width: 210mm !important; 
                     min-width: 210mm !important;
                     display: block !important;
+                    margin: 0 !important; 
+                    padding: 0 !important;
                 }
+                
+                /* O fundo fica no wrapper, pois ele cresce de acordo com as páginas do PDF */
                 #preview-wrapper { 
                     width: 210mm !important; 
                     max-width: 210mm !important; 
                     margin: 0 !important; 
                     padding: 0 !important; 
-                    /* A imagem agora só vai aparecer aqui, no momento da impressão! */
+                    background-color: white !important;
                     background-image: url('/fundo_timbrado.jpg') !important;
                     background-size: 210mm 297mm !important;
                     background-repeat: repeat-y !important;
                     background-position: top left !important;
+                    -webkit-print-color-adjust: exact !important; 
+                    print-color-adjust: exact !important; 
                 }
+                
                 .print-hidden { display: none !important; }
                 .page-break-before { page-break-before: always !important; break-before: page !important; }
                 .avoid-break { break-inside: avoid !important; }
@@ -245,9 +252,13 @@ export function DocumentPreview({ data, items, fotos, onUpdateItem }: DocumentPr
       {/* A tag <img> solta do fundo timbrado foi DELETADA propositalmente, pois o CSS acima assumiu o controle dela! */}
       <div id="preview-wrapper" className="relative z-[10] mx-auto print:w-full" style={{ width: '210mm', minHeight: '297mm' }}>
         <table className="w-full print-container font-sans text-slate-900 border-collapse relative z-[20]">
-            <thead className="print:table-header-group"><tr className="border-none"><td className="h-[4.5cm] w-full block border-none"></td></tr></thead>
+            <thead className="print:table-header-group">
+                <tr><td style={{ height: '4.5cm', padding: 0, border: 'none' }}></td></tr>
+            </thead>
             
-            <tfoot className="print:table-footer-group"><tr className="border-none"><td className="h-[3.5cm] w-full block border-none"></td></tr></tfoot>
+            <tfoot className="print:table-footer-group">
+                <tr><td style={{ height: '3.5cm', padding: 0, border: 'none' }}></td></tr>
+            </tfoot>
 
             <tbody>
                 <tr className="border-none">
