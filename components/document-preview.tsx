@@ -220,17 +220,12 @@ export function DocumentPreview({ data, items, fotos, onUpdateItem }: DocumentPr
                     padding: 0 !important;
                 }
                 
-                /* O fundo fica no wrapper, pois ele cresce de acordo com as páginas do PDF */
                 #preview-wrapper { 
                     width: 210mm !important; 
                     max-width: 210mm !important; 
                     margin: 0 !important; 
                     padding: 0 !important; 
-                    background-color: white !important;
-                    background-image: url('/fundo_timbrado.jpg') !important;
-                    background-size: 210mm 297mm !important;
-                    background-repeat: repeat-y !important;
-                    background-position: top left !important;
+                    background-color: transparent !important;
                     -webkit-print-color-adjust: exact !important; 
                     print-color-adjust: exact !important; 
                 }
@@ -253,7 +248,18 @@ export function DocumentPreview({ data, items, fotos, onUpdateItem }: DocumentPr
       <div id="preview-wrapper" className="relative z-[10] mx-auto print:w-full" style={{ width: '210mm', minHeight: '297mm' }}>
         <table className="w-full print-container font-sans text-slate-900 border-collapse relative z-[20]">
             <thead className="print:table-header-group">
-                <tr><td style={{ height: '4.5cm', padding: 0, border: 'none' }}></td></tr>
+                <tr>
+                    {/* position: relative adicionado aqui para prender a imagem */}
+                    <td style={{ height: '4.5cm', padding: 0, border: 'none', position: 'relative' }}>
+                        {/* A imagem carimba perfeitamente o início de cada página! */}
+                        <img 
+                            src="/fundo_timbrado.jpg" 
+                            className="hidden print:block absolute top-0 left-0 z-[-1] pointer-events-none" 
+                            style={{ width: '210mm', height: '297mm', maxWidth: 'none' }} 
+                            alt="Fundo Timbrado"
+                        />
+                    </td>
+                </tr>
             </thead>
             
             <tfoot className="print:table-footer-group">
