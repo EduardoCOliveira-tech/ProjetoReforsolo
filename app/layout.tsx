@@ -1,15 +1,21 @@
 // app/layout.tsx
-import type { Metadata } from "next";
-import { Roboto } from "next/font/google"; // <--- Importe a Roboto
+import type { Metadata, Viewport } from "next";
+import { Roboto } from "next/font/google"; 
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 
-// Configure a fonte
 const roboto = Roboto({ 
   subsets: ["latin"], 
   weight: ["300", "400", "500", "700"],
   variable: "--font-roboto",
 });
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false, // Impede do layout quebrar ao focar no input
+};
 
 export const metadata: Metadata = {
   title: "SGP Reforsolo",
@@ -22,7 +28,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR"> {/* <--- Garanta que está pt-BR */}
+    <html lang="pt-BR" suppressHydrationWarning>
       <body className={`${roboto.variable} font-sans antialiased`}>
         {children}
         <Toaster />

@@ -4,7 +4,6 @@ import { useState } from "react"
 import { EditorSidebar } from "@/components/editor-sidebar"
 import { DocumentPreview } from "@/components/document-preview"
 import type { ProposalData, SelectedItem, ProjectType } from "@/lib/proposal-types"
-import { ZoomControls } from "@/components/zoom-controls"
 import { TEMPLATES } from "@/lib/templates"
 
 function getTodayISO() {
@@ -31,13 +30,13 @@ export default function Page() {
     introServico: "",
     tecnica: "",
     cronDias: [],
+    observacoes: [],
+    condicoes: { pagamento: "", prazo: "", validade: "" }
   })
 
   const [items, setItems] = useState<SelectedItem[]>([])
   const [fotos, setFotos] = useState<string[]>([])
-  const [zoom, setZoom] = useState(0.65)
 
-  // Inicia o projeto com os dados do Template escolhido
   const startProject = (type: ProjectType) => {
     const template = TEMPLATES[type]
     
@@ -47,7 +46,9 @@ export default function Page() {
         nomeProjeto: template.nomeProjeto,
         introServico: template.introServico,
         tecnica: template.tecnica,
-        cronDias: template.cronDias
+        cronDias: template.cronDias,
+        observacoes: template.observacoes,
+        condicoes: template.condicoes
     }))
     
     setView('editor')
@@ -59,7 +60,6 @@ export default function Page() {
     setItems(newItems)
   }
 
-  // --- TELA DE SELEÇÃO INICIAL (LANDING) ---
  if (view === 'landing') {
     return (
         <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center p-4">
@@ -72,7 +72,6 @@ export default function Page() {
                     <p className="text-slate-400">Selecione o tipo de projeto para iniciar uma nova proposta técnica.</p>
                 </div>
 
-                {/* Alterado para 3 colunas (md:grid-cols-3) */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <button onClick={() => startProject('drenagem')} className="group relative p-8 border-2 border-slate-700 bg-slate-800/50 rounded-2xl hover:border-blue-500 hover:bg-slate-800 transition-all text-left flex flex-col items-center duration-300">
                         <div className="h-14 w-14 bg-blue-500/10 rounded-2xl flex items-center justify-center text-blue-500 mb-4 group-hover:scale-110 group-hover:bg-blue-500 group-hover:text-white transition-all duration-300">
@@ -90,7 +89,6 @@ export default function Page() {
                         <p className="text-sm text-slate-400 text-center leading-relaxed">Ensaios de campo, mapas geológicos, pedológicos e laudos completos.</p>
                     </button>
 
-                    {/* NOVO: BOTÃO SONDAGEM SPT */}
                     <button onClick={() => startProject('sondagem')} className="group relative p-8 border-2 border-slate-700 bg-slate-800/50 rounded-2xl hover:border-amber-500 hover:bg-slate-800 transition-all text-left flex flex-col items-center duration-300">
                         <div className="h-14 w-14 bg-amber-500/10 rounded-2xl flex items-center justify-center text-amber-500 mb-4 group-hover:scale-110 group-hover:bg-amber-500 group-hover:text-white transition-all duration-300">
                             <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
@@ -104,13 +102,13 @@ export default function Page() {
     )
   }
 
-  // --- TELA DO EDITOR ---
   return (
-    // ADICIONADO: Classes 'print:' para resetar o layout fixo na hora da impressão
-    <div className="flex h-screen bg-slate-950 overflow-hidden print:overflow-visible print:h-auto print:block print:bg-white">
+    // FIX PRINCIPAL: 'fixed inset-0' trava a tela. Adicionado todos os 'print:' para virar um documento longo na impressão
+    <div className="fixed inset-0 flex flex-col-reverse lg:flex-row w-full bg-slate-950 overflow-hidden print:static print:h-auto print:block print:bg-white print:overflow-visible">
       
-      {/* Wrapper da Sidebar com 'print:hidden' para garantir que suma */}
-      <div className="h-full print:hidden">
+      {/* SIDEBAR */}
+      <div className="h-[50dvh] lg:h-full w-full lg:w-auto shrink-0 border-t lg:border-t-0 lg:border-r border-slate-800 bg-slate-950 shadow-[0_-10px_20px_-5px_rgba(0,0,0,0.5)] lg:shadow-none relative z-20 print:hidden flex flex-col">
+        {/* FIX MOBILE SCROLL: Removida a div de overflow extra daqui, pois a EditorSidebar já tem ScrollArea */}
         <EditorSidebar
             data={data}
             onChange={setData}
@@ -121,11 +119,10 @@ export default function Page() {
         />
       </div>
 
-      {/* Main ajustado: remove overflow na impressão e reseta margens */}
-      <main className="flex-1 overflow-auto relative bg-slate-900/50 flex flex-col items-center print:overflow-visible print:h-auto print:block print:bg-white print:m-0 print:p-0">
+      {/* MAIN CONTAINER PREVIEW */}
+      <main className="min-w-0 w-full h-[50dvh] lg:h-full flex-1 overflow-x-hidden overflow-y-auto overscroll-contain relative bg-slate-900/50 print:h-auto print:overflow-visible print:block print:bg-white print:p-0 print:m-0">
         
-        {/* Botão Voltar (Escondido na impressão) */}
-        <div className="absolute top-4 left-4 z-50 print:hidden">
+        <div className="sticky top-4 left-4 z-50 inline-block ml-4 mt-4 print:hidden">
              <button 
                 onClick={() => setView('landing')} 
                 className="bg-slate-800 px-3 py-1.5 rounded-lg shadow-lg text-xs font-medium text-slate-300 hover:text-white border border-slate-700 hover:border-slate-500 transition-all flex items-center gap-2"
@@ -134,20 +131,14 @@ export default function Page() {
              </button>
          </div>
 
-        {/* Wrapper do Documento (Ajustado para não ter padding na impressão) */}
-        <div className="py-6 px-4 flex justify-center w-full print:p-0 print:block">
+        <div className="py-6 px-0 sm:px-4 flex justify-start lg:justify-center w-full min-w-0 overflow-x-auto print:block print:p-0 print:m-0 print:overflow-visible">
           <DocumentPreview
             data={data}
             items={items}
             fotos={fotos}
-            zoom={zoom}
             onUpdateItem={updateItem}
+            zoom={1}
           />
-        </div>
-
-        {/* Zoom (Escondido na impressão) */}
-        <div className="print:hidden">
-            <ZoomControls zoom={zoom} onZoomChange={setZoom} />
         </div>
       </main>
     </div>

@@ -19,7 +19,6 @@ export interface SelectedItem extends ServiceItem {
 }
 
 export interface ProposalData {
-  // Configuração
   tipoProjeto: ProjectType
   tipoCliente: ClientType
   numProposta: string
@@ -29,12 +28,20 @@ export interface ProposalData {
   endereco: string // Obra
   nomeProjeto: string
   cliente: string // Nome
+  cpf?: string
   empresa: string
-  cnpj: string
+  cnpj?: string // Correção: Passou a opcional
   ac: string // Aos cuidados de
   introServico: string
   tecnica: string
   cronDias: string[]
+  // Correção: Adicionados os campos que faltavam
+  observacoes: string[]
+  condicoes: {
+    pagamento: string
+    prazo: string
+    validade: string
+  }
 }
 
 export const SERVICOS_DB: ServiceItem[] = [
@@ -86,14 +93,12 @@ export const SERVICOS_DB: ServiceItem[] = [
     diasExecucao: 3,
     diaInicioPadrao: 1
   },
-
-  // --- NOVOS SERVIÇOS: GEOTECNIA (SOLOS MOLES) ---
   {
     id: 7,
     nome: "Mobilização de equipe técnica especializada e recursos necessários para execução dos serviços de coleta de amostras de solos moles, incluindo logística, equipamentos auxiliares e preparação operacional para execução segura e adequada das atividades.",
     unidade: "vb",
     preco: 1800.0,
-    diasExecucao: 2, // Preenche "1 a 5" e "6 a 10"
+    diasExecucao: 2, 
     diaInicioPadrao: 1
   },
   {
@@ -101,15 +106,15 @@ export const SERVICOS_DB: ServiceItem[] = [
     nome: "Planejamento técnico da campanha de investigação geotécnica, incluindo análise prévia das condições geológico-geotécnicas da área, embasados em relatórios anteriores, definição dos pontos de amostragem em solos moles, avaliação da representatividade estratigráfica e estabelecimento dos procedimentos técnicos a serem adotados em campo e laboratório.",
     unidade: "un",
     preco: 1000.0,
-    diasExecucao: 1, // Preenche "1 a 5"
+    diasExecucao: 1, 
     diaInicioPadrao: 1
   },
   {
-    id: 9,
-    nome: "Execução de coleta de amostra indeformada de solo mole, considerando as particularidades estratigráficas locais, com foco na obtenção de material representativo para ensaios de resistência ao cisalhamento em laboratório. Abertura do pré-furo/cava, por conta do cliente!",
+    id: 9, // Correção: Ponto de exclamação removido do final
+    nome: "Execução de coleta de amostra indeformada de solo mole, considerando as particularidades estratigráficas locais, com foco na obtenção de material representativo para ensaios de resistência ao cisalhamento em laboratório. Abertura do pré-furo/cava, por conta do cliente.",
     unidade: "un",
     preco: 1250.0,
-    diasExecucao: 2, // Preenche "1 a 5" e "6 a 10"
+    diasExecucao: 2, 
     diaInicioPadrao: 1
   },
   {
@@ -117,23 +122,23 @@ export const SERVICOS_DB: ServiceItem[] = [
     nome: "Identificação, selagem, acondicionamento e transporte técnico das amostras coletadas, adotando procedimentos destinados à minimização de distúrbios mecânicos, variações de umidade e degradação estrutural até a etapa de ensaios laboratoriais.",
     unidade: "un",
     preco: 400.0,
-    diasExecucao: 2, // Preenche "1 a 5" e "6 a 10"
+    diasExecucao: 2, 
     diaInicioPadrao: 1
   },
   {
-    id: 11,
-    nome: "Preparação criteriosa das amostras em laboratório para ensaio na condição natural e saturada, incluindo procedimentos de saturação controlada, incluindo regularização geométrica, controle dimensional e verificação das condições físicas do material, respeitando suas características originais. Execução de ensaio de cisalhamento direto em amostra de solo mole na condição natural, com aplicação de diferentes níveis de tensão normal, visando à determinação dos parâmetros de resistência ao cisalhamento (coesão aparente e ângulo de atrito interno).",
+    id: 11, // Correção: Redundância do "incluindo" substituída por "com"
+    nome: "Preparação criteriosa das amostras em laboratório para ensaio na condição natural e saturada, incluindo procedimentos de saturação controlada, com regularização geométrica, controle dimensional e verificação das condições físicas do material, respeitando suas características originais. Execução de ensaio de cisalhamento direto em amostra de solo mole na condição natural, com aplicação de diferentes níveis de tensão normal, visando à determinação dos parâmetros de resistência ao cisalhamento (coesão aparente e ângulo de atrito interno).",
     unidade: "un",
     preco: 250.0,
-    diasExecucao: 2, // Preenche "6 a 10" e "11 a 15"
-    diaInicioPadrao: 2 // Começa na coluna 2
+    diasExecucao: 2, 
+    diaInicioPadrao: 2 
   },
   {
     id: 12,
     nome: "Execução do ensaio de determinação do limite de liquidez e plasticidade, com avaliação do comportamento reológico do solo em diferentes estados de consistência, permitindo a identificação da sensibilidade do material à variação do teor de umidade e obtenção de parâmetros fundamentais para classificação e análise do comportamento mecânico de solos finos e moles.",
     unidade: "un",
     preco: 340.0,
-    diasExecucao: 3, // Preenche "6 a 10", "11 a 15", "16 a 20"
+    diasExecucao: 3, 
     diaInicioPadrao: 2
   },
   {
@@ -141,7 +146,7 @@ export const SERVICOS_DB: ServiceItem[] = [
     nome: "Execução de análise granulométrica completa, incluindo peneiramento para frações grossas e ensaio de sedimentação para frações finas, possibilitando a determinação da distribuição granulométrica e da predominância de partículas argilosas e silto-argilosas.",
     unidade: "un",
     preco: 300.0,
-    diasExecucao: 3, // Preenche "6 a 10", "11 a 15", "16 a 20"
+    diasExecucao: 3, 
     diaInicioPadrao: 2
   },
   {
@@ -149,7 +154,7 @@ export const SERVICOS_DB: ServiceItem[] = [
     nome: "Execução de ensaio de cisalhamento direto em amostra de solo mole nas condições natural e saturadas, permitindo a avaliação do comportamento mecânico do solo sob condições desfavoráveis de drenagem e carregamento.",
     unidade: "un",
     preco: 3500.0,
-    diasExecucao: 4, // Preenche "6 a 10", "11 a 15", "16 a 20", "21 a 25"
+    diasExecucao: 4, 
     diaInicioPadrao: 2
   },
   {
@@ -157,19 +162,17 @@ export const SERVICOS_DB: ServiceItem[] = [
     nome: "Elaboração de relatório técnico geotécnico conclusivo, contendo descrição da metodologia adotada, procedimentos de campo e laboratório, apresentação dos resultados, interpretação técnica, conclusões e recomendações aplicáveis a projetos e análises de engenharia.",
     unidade: "un",
     preco: 3500.0,
-    diasExecucao: 3, // Preenche "11 a 15", "16 a 20", "21 a 25"
-    diaInicioPadrao: 3 // Começa na coluna 3
+    diasExecucao: 3, 
+    diaInicioPadrao: 3 
   },
   {
     id: 16,
     nome: "EMISSÃO DE ART - CREA/DF.",
     unidade: "vb",
     preco: 290.0,
-    diasExecucao: 1, // Preenche "21 a 25"
-    diaInicioPadrao: 5 // Começa na coluna 5
+    diasExecucao: 1, 
+    diaInicioPadrao: 5 
   },
-
-  // --- NOVOS SERVIÇOS: SONDAGEM SPT ESPECÍFICO ---
   {
     id: 17,
     nome: "Mobilização e desmobilização do corpo técnico e equipamentos para a realização de sondagens SPT com coleta de amostras.",
@@ -200,64 +203,62 @@ export function formatCurrency(value: number): string {
   return value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })
 }
 
-// ... mantenha as funções valorExtenso e formatDate como estão ...
 export function valorExtenso(v: number): string {
-    // (Mantenha o código original aqui para economizar espaço)
-    if (v === 0) return "zero reais"
-    const inteiro = Math.floor(v)
-    const centavos = Math.round((v - inteiro) * 100)
-  
-    const unidades = [
-      "", "um", "dois", "três", "quatro", "cinco",
-      "seis", "sete", "oito", "nove", "dez",
-      "onze", "doze", "treze", "quatorze", "quinze",
-      "dezesseis", "dezessete", "dezoito", "dezenove",
-    ]
-    const dezenas = [
-      "", "", "vinte", "trinta", "quarenta", "cinquenta",
-      "sessenta", "setenta", "oitenta", "noventa",
-    ]
-    const centenas = [
-      "", "cento", "duzentos", "trezentos", "quatrocentos", "quinhentos",
-      "seiscentos", "setecentos", "oitocentos", "novecentos",
-    ]
-  
-    function porExtenso(n: number): string {
-      if (n === 0) return ""
-      if (n === 100) return "cem"
-      if (n < 20) return unidades[n]
-      if (n < 100) {
-        const d = Math.floor(n / 10)
-        const u = n % 10
-        return u === 0 ? dezenas[d] : `${dezenas[d]} e ${unidades[u]}`
-      }
-      if (n < 1000) {
-        const c = Math.floor(n / 100)
-        const resto = n % 100
-        return resto === 0 ? (n === 100 ? "cem" : centenas[c]) : `${centenas[c]} e ${porExtenso(resto)}`
-      }
-      if (n < 1000000) {
-        const milhares = Math.floor(n / 1000)
-        const resto = n % 1000
-        const milStr = milhares === 1 ? "mil" : `${porExtenso(milhares)} mil`
-        return resto === 0 ? milStr : `${milStr} e ${porExtenso(resto)}`
-      }
-      return `${n}`
+  if (v === 0) return "zero reais"
+  const inteiro = Math.floor(v)
+  const centavos = Math.round(v * 100) % 100 // Correção: Lógica segura para ponto flutuante
+
+  const unidades = [
+    "", "um", "dois", "três", "quatro", "cinco",
+    "seis", "sete", "oito", "nove", "dez",
+    "onze", "doze", "treze", "quatorze", "quinze",
+    "dezesseis", "dezessete", "dezoito", "dezenove",
+  ]
+  const dezenas = [
+    "", "", "vinte", "trinta", "quarenta", "cinquenta",
+    "sessenta", "setenta", "oitenta", "noventa",
+  ]
+  const centenas = [
+    "", "cento", "duzentos", "trezentos", "quatrocentos", "quinhentos",
+    "seiscentos", "setecentos", "oitocentos", "novecentos",
+  ]
+
+  function porExtenso(n: number): string {
+    if (n === 0) return ""
+    if (n === 100) return "cem"
+    if (n < 20) return unidades[n]
+    if (n < 100) {
+      const d = Math.floor(n / 10)
+      const u = n % 10
+      return u === 0 ? dezenas[d] : `${dezenas[d]} e ${unidades[u]}`
     }
-  
-    let resultado = ""
-    if (inteiro > 0) {
-      resultado = `${porExtenso(inteiro)} ${inteiro === 1 ? "real" : "reais"}`
+    if (n < 1000) {
+      const c = Math.floor(n / 100)
+      const resto = n % 100
+      return resto === 0 ? (n === 100 ? "cem" : centenas[c]) : `${centenas[c]} e ${porExtenso(resto)}`
     }
-    if (centavos > 0) {
-      const centStr = `${porExtenso(centavos)} ${centavos === 1 ? "centavo" : "centavos"}`
-      resultado = resultado ? `${resultado} e ${centStr}` : centStr
+    if (n < 1000000) {
+      const milhares = Math.floor(n / 1000)
+      const resto = n % 1000
+      const milStr = milhares === 1 ? "mil" : `${porExtenso(milhares)} mil`
+      return resto === 0 ? milStr : `${milStr} e ${porExtenso(resto)}`
     }
-    return resultado
+    return `${n}`
   }
-  
-  export function formatDate(dateStr: string): string {
-    if (!dateStr) return "..."
-    const [ano, mes, dia] = dateStr.split("-")
-    return `${dia}/${mes}/${ano}`
+
+  let resultado = ""
+  if (inteiro > 0) {
+    resultado = `${porExtenso(inteiro)} ${inteiro === 1 ? "real" : "reais"}`
   }
+  if (centavos > 0) {
+    const centStr = `${porExtenso(centavos)} ${centavos === 1 ? "centavo" : "centavos"}`
+    resultado = resultado ? `${resultado} e ${centStr}` : centStr
+  }
+  return resultado
+}
+
+export function formatDate(dateStr: string): string {
+  if (!dateStr) return "..."
+  const [ano, mes, dia] = dateStr.split("-")
+  return `${dia}/${mes}/${ano}`
+}

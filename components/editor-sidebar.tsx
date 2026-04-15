@@ -17,6 +17,25 @@ import { Search, Plus, X, ImagePlus, Trash2, Printer, FileText, PenTool, DollarS
 import type { ProposalData, SelectedItem, ServiceItem } from "@/lib/proposal-types"
 import { SERVICOS_DB, formatCurrency } from "@/lib/proposal-types"
 
+const formatCPF = (value: string) => {
+  return value
+    .replace(/\D/g, "")
+    .replace(/(\d{3})(\d)/, "$1.$2")
+    .replace(/(\d{3})(\d)/, "$1.$2")
+    .replace(/(\d{3})(\d{1,2})/, "$1-$2")
+    .replace(/(-\d{2})\d+?$/, "$1")
+}
+
+const formatCNPJ = (value: string) => {
+  return value
+    .replace(/\D/g, "")
+    .replace(/(\d{2})(\d)/, "$1.$2")
+    .replace(/(\d{3})(\d)/, "$1.$2")
+    .replace(/(\d{3})(\d)/, "$1/$2")
+    .replace(/(\d{4})(\d)/, "$1-$2")
+    .replace(/(-\d{2})\d+?$/, "$1")
+}
+
 interface EditorSidebarProps {
   data: ProposalData
   onChange: (data: ProposalData) => void
@@ -43,7 +62,6 @@ export function EditorSidebar({
     s.nome.toLowerCase().includes(searchTerm.toLowerCase())
   )
 
-  // Função genérica para atualizar campos
   function handleFieldChange(field: keyof ProposalData, value: any) {
     onChange({ ...data, [field]: value })
   }
@@ -57,7 +75,6 @@ export function EditorSidebar({
         )
       )
     } else {
-      // Adiciona com padrões iniciais (customStart 1, customDuration padrão do DB ou 1)
       onItemsChange([...items, { 
           ...service, 
           qtd: 1, 
@@ -90,7 +107,6 @@ export function EditorSidebar({
     onItemsChange(items.filter((_, i) => i !== index))
   }
 
-  // Atualiza QTD, Preço, Start ou Duration
   function updateItem(
     index: number,
     field: "qtd" | "preco" | "customStart" | "customDuration",
@@ -128,7 +144,8 @@ export function EditorSidebar({
   }
 
   return (
-    <aside className="w-80 flex-shrink-0 h-screen flex flex-col bg-slate-900 border-r border-slate-800 text-slate-100 no-print">
+    // FIX MOBILE SCROLL: Alterado de 'h-screen' para 'h-full'.
+    <aside className="w-full lg:w-80 flex-shrink-0 h-full flex flex-col bg-slate-900 border-r border-slate-800 text-slate-100 print:hidden">
       <div className="px-4 py-3 border-b border-slate-800 flex items-center gap-2 bg-slate-950">
         <div className="w-3 h-3 rounded-full bg-[#006837]" />
         <h1 className="text-sm font-bold tracking-wide flex-1">
@@ -149,7 +166,7 @@ export function EditorSidebar({
         <div className="p-3">
           <Accordion
             type="multiple"
-            defaultValue={["dados", "orcamento"]} // Orçamento aberto por padrão para facilitar
+            defaultValue={["dados", "orcamento"]} 
             className="space-y-2"
           >
             {/* 1. Dados Principais */}
@@ -159,7 +176,6 @@ export function EditorSidebar({
               </AccordionTrigger>
               <AccordionContent className="space-y-3 pt-1">
                 
-                {/* SELETOR TIPO DE CLIENTE */}
                 <div className="grid grid-cols-2 gap-2 mb-2">
                     <button
                         onClick={() => handleFieldChange("tipoCliente", "pf")}
@@ -191,18 +207,34 @@ export function EditorSidebar({
                    <Input type="date" value={data.data} onChange={(e) => handleFieldChange("data", e.target.value)} className="h-7 text-xs bg-slate-900 border-slate-700" />
                 </div>
                 
-                {/* CAMPOS CONDICIONAIS */}
                 {data.tipoCliente === 'pf' ? (
-                    <div className="space-y-1">
-                        <Input placeholder="Nome do Cliente" value={data.cliente} onChange={(e) => handleFieldChange("cliente", e.target.value)} className="h-7 text-xs bg-slate-900 border-slate-700" />
-                    </div>
+                    <>
+                        <div className="space-y-1">
+                            <Input placeholder="Nome do Cliente" value={data.cliente} onChange={(e) => handleFieldChange("cliente", e.target.value)} className="h-7 text-xs bg-slate-900 border-slate-700" />
+                        </div>
+                        <div className="space-y-1">
+                            <Input 
+                                placeholder="CPF" 
+                                value={data.cpf || ''} 
+                                onChange={(e) => handleFieldChange("cpf", formatCPF(e.target.value))} 
+                                maxLength={14}
+                                className="h-7 text-xs bg-slate-900 border-slate-700" 
+                            />
+                        </div>
+                    </>
                 ) : (
                     <>
                         <div className="space-y-1">
                             <Input placeholder="Razão Social / Empresa" value={data.empresa || ''} onChange={(e) => handleFieldChange("empresa", e.target.value)} className="h-7 text-xs bg-slate-900 border-slate-700" />
                         </div>
                         <div className="space-y-1">
-                            <Input placeholder="CNPJ" value={data.cnpj || ''} onChange={(e) => handleFieldChange("cnpj", e.target.value)} className="h-7 text-xs bg-slate-900 border-slate-700" />
+                            <Input 
+                                placeholder="CNPJ" 
+                                value={data.cnpj || ''} 
+                                onChange={(e) => handleFieldChange("cnpj", formatCNPJ(e.target.value))} 
+                                maxLength={18}
+                                className="h-7 text-xs bg-slate-900 border-slate-700" 
+                            />
                         </div>
                         <div className="space-y-1">
                             <Input placeholder="A.C. (Aos Cuidados)" value={data.ac || ''} onChange={(e) => handleFieldChange("ac", e.target.value)} className="h-7 text-xs bg-slate-900 border-slate-700" />
@@ -324,11 +356,9 @@ export function EditorSidebar({
                       Itens selecionados
                     </Label>
                     
-                    {/* LISTA DE ITENS SELECIONADOS COM CAMPOS DE CRONOGRAMA */}
                     {items.map((item, idx) => (
                       <div key={`${item.id}-${idx}`} className="bg-slate-900 rounded p-2 border border-slate-700 hover:border-slate-500 transition-colors">
                         
-                        {/* Linha 1: Nome e Excluir */}
                         <div className="flex items-start justify-between mb-2 gap-2">
                           <span className="text-[10px] flex-1 font-medium text-slate-200 leading-tight line-clamp-3" title={item.nome}>
                             {item.nome}
@@ -338,7 +368,6 @@ export function EditorSidebar({
                           </button>
                         </div>
 
-                        {/* Linha 2: QTD e Preço */}
                         <div className="flex gap-2 mb-2">
                           <div className="flex items-center bg-slate-800 rounded px-1 border border-slate-700 w-1/3">
                              <span className="text-[8px] text-slate-500 mr-1">QTD</span>
@@ -350,7 +379,6 @@ export function EditorSidebar({
                           </div>
                         </div>
 
-                        {/* Linha 3: Início e Duração (Cronograma) */}
                         <div className="flex gap-2 border-t border-slate-800 pt-2 mb-1">
                             <div className="flex items-center bg-slate-950/50 rounded px-1 border border-slate-800 flex-1" title="Dia de início no cronograma">
                                 <span className="text-[8px] text-blue-400 mr-1">INÍCIO</span>

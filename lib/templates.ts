@@ -1,14 +1,27 @@
 // lib/templates.ts
 import { ProjectType } from "./proposal-types"
 
-export const TEMPLATES = {
+// Correção: Tipagem explícita para os templates
+export interface TemplateDef {
+  nomeProjeto: string
+  introServico: string
+  tecnica: string
+  cronDias: string[]
+  observacoes: string[]
+  condicoes: {
+    pagamento: string
+    prazo: string
+    validade: string
+  }
+}
+
+export const TEMPLATES: Record<ProjectType, TemplateDef> = {
   drenagem: {
     nomeProjeto: "DESENVOLVIMENTO DE PROJETO DE DRENAGEM DO SUBSOLO",
     introServico: "projeto de drenagem provisório e definitiva",
     tecnica: `Primeiramente será feita a avaliação do mapa Pedológico da área e do mapa geológico, com o objetivo de melhorar e identificar os tipos de solos e rochas da área de estudo.
             Para a técnica em questão serão utilizados furos a trado com diâmetro de 150 mm (Ver Fotos 1 a 6), uso de água potável, cronômetro digital, trena metálica e medidor de nível da água para determinação das infiltrações (sugeridos pela NBR 13969:1997). 
              O processo de escavação e saturação se dá em uma etapa até atingir as cotas necessárias para a realização dos ensaios, para todos os furos.`,
-    
     cronDias: ["1", "2", "3", "4", "5", "6", "7 a 40"],
     observacoes: [
       "Visitas técnicas adicionais deverão ser marcadas com antecedência mínima de 7 dias e serão aditivadas ao valor desta proposta;",
@@ -51,11 +64,10 @@ C. CLASSE III
       validade: "20 Dias."
     }
   },
-  // NOVO MODELO: SONDAGEM SPT
   sondagem: {
     nomeProjeto: "EXECUÇÃO DE SONDAGEM",
     introServico: "execução de sondagens",
-    tecnica: "", // O texto longo do SPT ficará fixo no Document Preview por causa das formatações HTML e Imagens
+    tecnica: "",
     cronDias: ["1", "2", "3", "4", "5"],
     observacoes: [
       "Água por conta do contratante;",
@@ -64,15 +76,15 @@ C. CLASSE III
       "A CONTRATANTE deve se certificar que a área em estudo terá livre acesso para a CONTRATADA; ",
       "Nos valores descritos, não estão inclusos serviços extras referentes à Medicina e Segurança do Trabalho (exames médicos complementares ASO, PCMSO / PPRA, treinamentos em NRs específicas e demais documentação pertinente que venha ser solicitada). Sendo exigência da CONTRATANTE, os valores referentes aos documentos solicitados serão cobrados extraordinariamente, conforme carta de medição emitida pela CONTRATADA."
     ],
-    condicoes: { pagamento: "100% após a entrega dos serviços realizados.", prazo: "20 Dias úteis trabalháveis.", validade: "15 Dias." }
+    // Correção: Removida a redundância "trabalháveis" do prazo
+    condicoes: { pagamento: "100% após a entrega dos serviços realizados.", prazo: "20 Dias úteis.", validade: "15 Dias." }
   }
 }
 
-// Imagens fixas para Geotecnia (URLs placeholders ou locais)
 export const GEO_IMAGES = [
-  "/img/placeholder_fig3.jpg", // Fig 3
-  "/img/placeholder_fig4.jpg", // Fig 4
-  "/img/placeholder_fig5.jpg", // Fig 5
-  "/img/placeholder_fig6.jpg", // Fig 6
-  "/img/placeholder_fig7.jpg", // Fig 7
+  "/img/placeholder_fig3.jpg",
+  "/img/placeholder_fig4.jpg",
+  "/img/placeholder_fig5.jpg",
+  "/img/placeholder_fig6.jpg",
+  "/img/placeholder_fig7.jpg",
 ]
