@@ -17,12 +17,6 @@ import { Search, Plus, X, ImagePlus, Trash2, Printer, FileText, PenTool, DollarS
 import type { ProposalData, SelectedItem, ServiceItem } from "@/lib/proposal-types"
 import { SERVICOS_DB, formatCurrency } from "@/lib/proposal-types"
 
-const response = await fetch('/api/pdf', {
-  method: 'POST',
-  body: JSON.stringify({ html: element.innerHTML }),
-  headers: { 'Content-Type': 'application/json' },
-});
-
 const formatCPF = (value: string) => {
   return value
     .replace(/\D/g, "")
