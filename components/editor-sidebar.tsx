@@ -17,6 +17,12 @@ import { Search, Plus, X, ImagePlus, Trash2, Printer, FileText, PenTool, DollarS
 import type { ProposalData, SelectedItem, ServiceItem } from "@/lib/proposal-types"
 import { SERVICOS_DB, formatCurrency } from "@/lib/proposal-types"
 
+const response = await fetch('/api/pdf', {
+  method: 'POST',
+  body: JSON.stringify({ html: element.innerHTML }),
+  headers: { 'Content-Type': 'application/json' },
+});
+
 const formatCPF = (value: string) => {
   return value
     .replace(/\D/g, "")
@@ -53,14 +59,51 @@ export function EditorSidebar({
   fotos,
   onFotosChange,
 }: EditorSidebarProps) {
+  // HOOKS (Sempre no topo da função)
   const [searchTerm, setSearchTerm] = useState("")
   const [customDesc, setCustomDesc] = useState("")
   const [customValor, setCustomValor] = useState("")
+  const [isGenerating, setIsGenerating] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const filteredServices = SERVICOS_DB.filter((s) =>
     s.nome.toLowerCase().includes(searchTerm.toLowerCase())
   )
+
+  // FUNÇÃO PARA GERAR PDF VIA API (OPÇÃO 1)
+  const handleDownloadPDF = async () => {
+    setIsGenerating(true)
+    try {
+      const element = document.getElementById("preview-wrapper")
+      if (!element) {
+        alert("Erro: Elemento de preview não encontrado.")
+        return
+      }
+
+      const response = await fetch('/api/pdf', {
+        method: 'POST',
+        body: JSON.stringify({ html: element.innerHTML }),
+        headers: { 'Content-Type': 'application/json' },
+      })
+
+      if (!response.ok) throw new Error('Erro na geração do arquivo')
+
+      const blob = await response.blob()
+      const url = window.URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `Proposta_${data.numProposta || 'Reforsolo'}.pdf`
+      document.body.appendChild(a)
+      a.click()
+      a.remove()
+      window.URL.revokeObjectURL(url)
+    } catch (err) {
+      console.error(err)
+      alert("Ocorreu um erro ao gerar o PDF estável.")
+    } finally {
+      setIsGenerating(false)
+    }
+  }
 
   function handleFieldChange(field: keyof ProposalData, value: any) {
     onChange({ ...data, [field]: value })
@@ -144,7 +187,6 @@ export function EditorSidebar({
   }
 
   return (
-    // FIX MOBILE SCROLL: Alterado de 'h-screen' para 'h-full'.
     <aside className="w-full lg:w-80 flex-shrink-0 h-full flex flex-col bg-slate-900 border-r border-slate-800 text-slate-100 print:hidden">
       <div className="px-4 py-3 border-b border-slate-800 flex items-center gap-2 bg-slate-950">
         <div className="w-3 h-3 rounded-full bg-[#006837]" />
@@ -153,12 +195,13 @@ export function EditorSidebar({
         </h1>
         <Button
           size="sm"
-          onClick={() => window.print()}
+          onClick={handleDownloadPDF}
+          disabled={isGenerating}
           variant="ghost"
           className="h-7 px-2 text-[10px] hover:bg-slate-800 text-slate-300"
         >
           <Printer className="h-3 w-3 mr-1" />
-          Imprimir
+          {isGenerating ? "Gerando..." : "Gerar PDF"}
         </Button>
       </div>
 
@@ -169,7 +212,6 @@ export function EditorSidebar({
             defaultValue={["dados", "orcamento"]} 
             className="space-y-2"
           >
-            {/* 1. Dados Principais */}
             <AccordionItem value="dados" className="border border-slate-700 bg-slate-800/50 rounded px-2">
               <AccordionTrigger className="text-xs font-semibold text-green-400 hover:no-underline py-2">
                 <span className="flex items-center gap-2"><FileText size={14}/> 1. Dados Principais</span>
@@ -246,7 +288,7 @@ export function EditorSidebar({
                   <Input placeholder="Telefone" value={data.telefone} onChange={(e) => handleFieldChange("telefone", e.target.value)} className="h-7 text-xs bg-slate-900 border-slate-700" />
                 </div>
                 <div className="space-y-1">
-                  <Input placeholder="Local (Ex: Brasília - DF)" value={data.local} onChange={(e) => handleFieldChange("local", e.target.value)} className="h-7 text-xs bg-slate-900 border-slate-700" />
+                  <Input placeholder="Local" value={data.local} onChange={(e) => handleFieldChange("local", e.target.value)} className="h-7 text-xs bg-slate-900 border-slate-700" />
                 </div>
                 <div className="space-y-1">
                   <Input placeholder="Endereço / Obra" value={data.endereco} onChange={(e) => handleFieldChange("endereco", e.target.value)} className="h-7 text-xs bg-slate-900 border-slate-700" />
@@ -260,7 +302,6 @@ export function EditorSidebar({
               </AccordionContent>
             </AccordionItem>
 
-            {/* 2. Materiais e Tecnica */}
             <AccordionItem value="tecnica" className="border border-slate-700 bg-slate-800/50 rounded px-2">
               <AccordionTrigger className="text-xs font-semibold text-green-400 hover:no-underline py-2">
                  <span className="flex items-center gap-2"><PenTool size={14}/> 2. Materiais e Técnica</span>
@@ -292,7 +333,6 @@ export function EditorSidebar({
               </AccordionContent>
             </AccordionItem>
 
-            {/* 3. Orçamento */}
             <AccordionItem value="orcamento" className="border border-slate-700 bg-slate-800/50 rounded px-2">
               <AccordionTrigger className="text-xs font-semibold text-green-400 hover:no-underline py-2">
                 <span className="flex items-center gap-2"><DollarSign size={14}/> 3. Orçamento</span>
@@ -316,7 +356,7 @@ export function EditorSidebar({
                       onClick={() => addService(service)}
                       className="w-full text-left px-2 py-1.5 text-[10px] hover:bg-green-900/30 hover:text-green-400 flex items-start justify-between transition-colors group gap-2"
                     >
-                      <span className="flex-1 leading-tight line-clamp-2" title={service.nome}>{service.nome}</span>
+                      <span className="flex-1 leading-tight line-clamp-2">{service.nome}</span>
                       <Plus className="h-3 w-3 flex-shrink-0 mt-0.5 opacity-0 group-hover:opacity-100" />
                     </button>
                   ))}
@@ -360,7 +400,7 @@ export function EditorSidebar({
                       <div key={`${item.id}-${idx}`} className="bg-slate-900 rounded p-2 border border-slate-700 hover:border-slate-500 transition-colors">
                         
                         <div className="flex items-start justify-between mb-2 gap-2">
-                          <span className="text-[10px] flex-1 font-medium text-slate-200 leading-tight line-clamp-3" title={item.nome}>
+                          <span className="text-[10px] flex-1 font-medium text-slate-200 leading-tight">
                             {item.nome}
                           </span>
                           <button type="button" onClick={() => removeItem(idx)} className="text-slate-500 hover:text-red-400 shrink-0 mt-0.5">
@@ -377,29 +417,6 @@ export function EditorSidebar({
                              <span className="text-[8px] text-slate-500 mr-1">R$</span>
                              <Input type="number" value={item.preco} onChange={(e) => updateItem(idx, "preco", e.target.value)} className="h-5 text-[10px] w-full bg-transparent border-none p-0 focus-visible:ring-0" />
                           </div>
-                        </div>
-
-                        <div className="flex gap-2 border-t border-slate-800 pt-2 mb-1">
-                            <div className="flex items-center bg-slate-950/50 rounded px-1 border border-slate-800 flex-1" title="Dia de início no cronograma">
-                                <span className="text-[8px] text-blue-400 mr-1">INÍCIO</span>
-                                <Input 
-                                    type="number" 
-                                    value={item.customStart || 1} 
-                                    onChange={(e) => updateItem(idx, "customStart", e.target.value)} 
-                                    className="h-5 text-[10px] w-full bg-transparent border-none p-0 text-center focus-visible:ring-0 text-blue-200" 
-                                    min={1}
-                                />
-                            </div>
-                            <div className="flex items-center bg-slate-950/50 rounded px-1 border border-slate-800 flex-1" title="Duração em dias">
-                                <span className="text-[8px] text-blue-400 mr-1">DIAS</span>
-                                <Input 
-                                    type="number" 
-                                    value={item.customDuration || item.diasExecucao || 1} 
-                                    onChange={(e) => updateItem(idx, "customDuration", e.target.value)} 
-                                    className="h-5 text-[10px] w-full bg-transparent border-none p-0 text-center focus-visible:ring-0 text-blue-200" 
-                                    min={1}
-                                />
-                            </div>
                         </div>
 
                         <div className="text-right text-[10px] text-green-500 font-bold">
