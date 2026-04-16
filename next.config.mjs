@@ -1,8 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  typescript: {
-    ignoreBuildErrors: true,
-  }
-}
+  // Diz ao Next.js para não processar esses pacotes pesados no build
+  serverExternalPackages: ['puppeteer-core', '@sparticuz/chromium'],
+};
 
-export default nextConfig
+export default nextConfig;
