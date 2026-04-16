@@ -37,9 +37,10 @@ export async function POST(req: Request) {
       });
     } else {
       // Configuração para Produção (Vercel)
+      // Configuração para Produção (Vercel)
       browser = await puppeteer.launch({
         args: chromium.args,
-        defaultViewport: chromium.defaultViewport,
+        defaultViewport: chromium.defaultViewport as any, // <- Adicione 'as any' aqui
         executablePath: await chromium.executablePath(),
         headless: true,
       });
