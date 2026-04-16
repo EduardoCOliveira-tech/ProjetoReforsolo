@@ -1,16 +1,17 @@
 import { NextResponse } from 'next/server';
 import puppeteer from 'puppeteer-core';
-import chromium from '@sparticuz/chromium';
+import chromium from '@sparticuz/chromium-min';
 import fs from 'fs';
 
+// Configurações para a Vercel
 export const dynamic = 'force-dynamic';
-export const maxDuration = 60;
+export const maxDuration = 60; 
 
 export async function POST(req: Request) {
   try {
     const { html } = await req.json();
     
-    // Captura o host para resolver caminhos de imagem (ex: localhost:3000)
+    // Resolve a URL base para que as imagens na pasta /public (JPG/PNG) carreguem no PDF
     const host = req.headers.get('host');
     const protocol = process.env.NODE_ENV === 'development' ? 'http' : 'https';
     const baseUrl = `${protocol}://${host}`;
@@ -18,7 +19,7 @@ export async function POST(req: Request) {
     let browser;
 
     if (process.env.NODE_ENV === 'development') {
-      // Caminhos comuns de navegadores no Windows (incluindo o Brave)
+      // Caminhos comuns de navegadores no Windows (incluindo o seu Brave)
       const paths = [
         "C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe",
         "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
@@ -36,18 +37,19 @@ export async function POST(req: Request) {
         headless: true,
       });
     } else {
-      // Configuração para Produção (Vercel)
+      // Configuração para Produção (Vercel) usando a versão Min
       browser = await puppeteer.launch({
         args: chromium.args,
-        executablePath: await chromium.executablePath(),
+        executablePath: await chromium.executablePath(
+          'https://github.com/Sparticuz/chromium/releases/download/v131.0.1/chromium-v131.0.1-pack.tar'
+        ),
         headless: true,
       });
     }
 
     const page = await browser.newPage();
     
-    // A tag <base> faz com que imagens como "/fundo_timbrado.jpg" 
-    // funcionem apontando para o seu servidor local ou produção.
+    // Injeta o HTML com a tag <base> para imagens e o Tailwind para estilos
     await page.setContent(`
       <!DOCTYPE html>
       <html>
@@ -56,14 +58,19 @@ export async function POST(req: Request) {
           <base href="${baseUrl}/">
           <script src="https://cdn.tailwindcss.com"></script>
           <style>
-            body { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            body { 
+              -webkit-print-color-adjust: exact !important; 
+              print-color-adjust: exact !important; 
+            }
+            /* Garante que o conteúdo não seja cortado */
+            .print-container { width: 210mm; }
           </style>
         </head>
         <body>
-          <div style="width: 210mm;">${html}</div>
+          <div class="print-container">${html}</div>
         </body>
       </html>
-    `, { waitUntil: 'networkidle0' }); // Espera todas as imagens carregarem
+    `, { waitUntil: 'networkidle0' });
 
     const pdf = await page.pdf({
       format: 'A4',
@@ -76,11 +83,14 @@ export async function POST(req: Request) {
     return new NextResponse(pdf, {
       headers: {
         'Content-Type': 'application/pdf',
-        'Content-Disposition': 'attachment; filename="proposta.pdf"',
+        'Content-Disposition': 'attachment; filename="proposta-reforsolo.pdf"',
       },
     });
   } catch (error: any) {
     console.error('ERRO NO SERVIDOR PDF:', error.message);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Erro ao gerar PDF', details: error.message }, 
+      { status: 500 }
+    );
   }
 }
